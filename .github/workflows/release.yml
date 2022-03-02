@@ -27,7 +27,7 @@ jobs:
       # Build Docker Image
       - name: Dump GitHub context
         id: github_context_step
-        run: echo '${{ toJSON(github) }}
+        run: echo '${{ toJSON(github) }}'
         
       - name: copy dingo.zip
         run: cp ./dingo-dist/build/distributions/dingo.zip ./docker
@@ -51,8 +51,8 @@ jobs:
           context: ./docker
           # Note: tags has to be all lower-case
           tags: |
-            huzx0608/my-project/v0.2.0:latest
-            ghcr.io/huzx0608/my-project/v0.2.0:latest
+            huzx0608/github-workflow/v0.2.0:latest
+            ghcr.io/huzx0608/github-workflow/v0.2.0:latest
           # build on feature branches, push only on main branch
           push: ${{ github.ref == 'refs/heads/develop' }}
 
