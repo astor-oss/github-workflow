@@ -24,14 +24,24 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - uses: actions/checkout@v2
+      
       # Build Docker Image
       - name: Dump GitHub context
         id: github_context_step
         run: echo '${{ toJSON(github) }}'
-        
-      - name: copy dingo.zip
-        run: cp ./dingo-dist/build/distributions/dingo.zip ./docker
-        
+
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+            github_token: ${{secrets.GITHUB_TOKEN}}
+            workflow: build.yml
+            name: dingo.zip
+
+      - name: rename artifactory name
+        run: | 
+            cp dingo.zip ./docker
+      
       # setup Docker buld action
       - name: Set up Docker Buildx
         id: buildx
@@ -50,11 +60,9 @@ jobs:
           # relative path to the place where source code with Dockerfile is located
           context: ./docker
           # Note: tags has to be all lower-case
-          tags: |
-            huzx0608/github-workflow/v0.2.0:latest
-            ghcr.io/huzx0608/github-workflow/v0.2.0:latest
+          tags: ghcr.io/huzx0608/github-workflow:latest
           # build on feature branches, push only on main branch
-          push: ${{ github.ref == 'refs/heads/develop' }}
+          push: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
